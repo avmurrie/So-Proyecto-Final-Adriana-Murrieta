@@ -11,6 +11,8 @@ etc.
 - (4) Considerar definir diversas alertas (mínimo 2) que al superar un threshold
 pueda enviar un mensaje vía mensaje Whatsapp (Sugerencia API Twilio).
 ## Diagrama de Solución
+![DiagramaSolución drawio](https://user-images.githubusercontent.com/50672069/132141731-b89281b7-b9d2-42c6-bd7c-cbd264c553ff.png)
+
 ## Capturas de la solución
 ## Video de ejecución
 ## Bibiliografía
