@@ -19,13 +19,16 @@ void print_help(char *command)
 int main(int argc, char **argv)
 {
 	int opt;
+	extern char* optarg;
+	extern int optopt;
+	
 	int timeS=5;
 	
 	//Socket
 	int clientfd;
 	//Direcciones y puertos
 	char *hostname, *port;
-	extern char* optarg;
+	
 
 	//Lectura desde consola
 	char *linea_consola;
@@ -43,15 +46,26 @@ int main(int argc, char **argv)
  	const double megabyte = 1024 * 1024;
  	const long ms=1000000;
 
-	while ((opt = getopt (argc, argv, "th")) != -1){
+	while ((opt = getopt (argc, argv, "ht:")) != -1){
 		switch(opt)
 		{
 			case 'h':
 				print_help(argv[0]);
 				return 0;
 			case 't':
+				hostname = argv[1];
+				port = argv[2];
 				timeS=atoi(optarg);
 				break;	
+			case '?':
+				if(optopt == 't' && isprint(optopt)){
+					printf("tiempo por defecto es 5.");
+					break;
+				}else if(isprint(optopt)){
+					fprintf(stderr, "Opcion desconocida '-%c'.\n",optopt);
+				}else{
+					fprintf(stderr, "ERR>> Caracter desconocido '\\x%x'.\n",optopt);
+				}
 			default:
 			fprintf(stderr, "ERROR default");
 				fprintf(stderr, "uso: %s <hostname> <puerto>\n", argv[0]);
@@ -61,15 +75,14 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if(argc != 3){
-		fprintf(stderr, "ERROR ARGC");
+	if(argc !=5){
+	
 		fprintf(stderr, "uso: %s <hostname> <puerto>\n", argv[0]);
 		fprintf(stderr,"-t <tiempo de actualización en segundos>\n");
 		fprintf(stderr, "     %s -h\n", argv[0]);
 		return -1;
 	}else{
-		hostname = argv[1];
-		port = argv[2];
+		
 		printf("TIEMPO %d",timeS);
 	}
 
