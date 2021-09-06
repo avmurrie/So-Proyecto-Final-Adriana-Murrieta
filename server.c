@@ -113,9 +113,7 @@ int main(int argc, char **argv)
 	while ((opt = getopt (argc, argv, "hd")) != -1){
 		switch(opt)
 		{
-			case 'd':
-				dflag=true;
-				break;
+			
 			case 'h':
 				print_help(argv[0]);
 				return 0;
@@ -126,7 +124,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if(!(argc == 2 || argc == 3)){
+	if(!(argc == 2)){
 		fprintf(stderr, "uso: %s [-d] <puerto>\n", argv[0]);
 		fprintf(stderr, "     %s -h\n", argv[0]);
 		return -1;
@@ -211,54 +209,20 @@ void atender_cliente(int connfd)
 			return;
 
 		/* Summarize interesting values. */
-	printf ("system uptime : %ld days, %ld:%02ld:%02ld\n", 
- 	si.uptime / day, (si.uptime % day) / hour, 
- 	(si.uptime % hour) / minute, si.uptime % minute);
-	printf ("total RAM   : %5.1f MB\n", si.totalram / megabyte);
-	printf ("free RAM   : %5.1f MB\n", si.freeram / megabyte);
-	printf ("process count : %d\n", si.procs);
+		printf("Infotmación recibida del cliente: %d\n", connfd);
+		
+		printf ("system uptime : %ld days, %ld:%02ld:%02ld\n", 
+	 	si.uptime / day, (si.uptime % day) / hour, 
+	 	(si.uptime % hour) / minute, si.uptime % minute);
+		printf ("total RAM   : %5.1f MB\n", si.totalram / megabyte);
+		printf ("free RAM   : %5.1f MB\n", si.freeram / megabyte);
+		printf ("shared RAM   : %5.1f MB\n", si.sharedram / megabyte);
+		printf ("buffer RAM   : %5.1f MB\n", si.bufferram / megabyte);
+		printf ("process count : %d\n", si.procs);
+		printf ("Total SWAP  : %5.1f MB\n", si.totalswap / megabyte);
+		printf ("free SWAP  : %5.1f MB\n", si.freeswap / megabyte);
+		
 
-		//Detecta "CHAO" y se desconecta del cliente
-		if(strcmp(buf, "CHAO\n") == 0){
-			write(connfd, "BYE\n", 5);
-			return;
-		}
-
-	/*	//Remueve el salto de linea antes de extraer los tokens
-		buf[n - 1] = '\0';
-
-		//Crea argv con los argumentos en buf, asume separación por espacio
-		argv = parse_comando(buf, " ");
-
-		if(argv){
-			if((pid = fork()) == 0){
-				dup2(connfd, 1); //Redirecciona STDOUT al socket
-				dup2(connfd, 2); //Redirecciona STDERR al socket
-				if(execvp(argv[0], argv) < 0){
-					fprintf(stderr, "Comando desconocido...\n");
-					exit(1);
-				}
-			}
-
-			//Espera a que el proceso hijo termine su ejecución
-			waitpid(pid, &status, 0);
-
-			if(!WIFEXITED(status))
-				write(connfd, "ERROR\n",7);
-			else
-				write(connfd, "\0", 1); //Envia caracter null para notificar fin
-
-			/*Libera argv y su contenido
-			para evitar fugas de memoria *
-			for(int i = 0; argv[i]; i++)
-				free(argv[i]);
-			free(argv);
-
-		}else{
-			strcpy(buf, "Comando vacío...\n");
-			write(connfd, buf, strlen(buf) + 1);
-		}
-*/
 		memset(buf, 0, MAXLINE); //Encera el buffer
 	}
 }

@@ -1,6 +1,11 @@
 DEPS = common.h
 CFLAGS = -Wall -c
 
+LDFLAGS = -L/usr/local/lib -I/usr/lib
+INCLUDE = -I/usr/local/include -I/usr/include -Iinclude
+LDLIBS = -lcurl
+
+
 .PHONY: all debug sanitize clean
 all: server client
 
@@ -9,6 +14,10 @@ server: server.o common.o $(DEPS)
 
 client: client.o common.o $(DEPS)
 	gcc -o $@ client.o common.o $(DFLAGS)
+	
+twilio: c_sms.c twilio.c
+	gcc -o c_sms $(INCLUDE) $(LDFLAGS) $(DFLAGS) $(SOURCES) $(LDLIBS)
+	
 
 %.o: %.c $(DEPS)
 	gcc $(CFLAGS) $< $(DFLAGS)

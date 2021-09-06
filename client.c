@@ -1,13 +1,16 @@
 #include <getopt.h>
 #include <limits.h>
 
+#include <unistd.h>
+
 
 #include "common.h"
 
 void print_help(char *command)
 {
-	printf("Cliente simple envío de comandos.\n");
+	printf("Cliente simple envío de información del sistema.\n");
 	printf("uso:\n %s <hostname> <puerto>\n", command);
+	printf("     -t <tiempo de actualización en segundos>\n");
 	printf(" %s -h\n", command);
 	printf("Opciones:\n");
 	printf(" -h\t\t\tAyuda, muestra este mensaje\n");
@@ -16,17 +19,19 @@ void print_help(char *command)
 int main(int argc, char **argv)
 {
 	int opt;
-
+	int timeS=5;
+	
 	//Socket
 	int clientfd;
 	//Direcciones y puertos
 	char *hostname, *port;
+	extern char* optarg;
 
 	//Lectura desde consola
 	char *linea_consola;
-	char read_buffer[MAXLINE + 1] = {0};
-	size_t max = MAXLINE;
-	ssize_t n, l = 0;
+	//char read_buffer[MAXLINE + 1] = {0};
+	//size_t max = MAXLINE;
+	ssize_t n = 0;
 	
 	//Información del sistema
 	struct sysinfo si;
@@ -36,27 +41,36 @@ int main(int argc, char **argv)
  	const long hour = minute * 60;
  	const long day = hour * 24;
  	const double megabyte = 1024 * 1024;
+ 	const long ms=1000000;
 
-	while ((opt = getopt (argc, argv, "h")) != -1){
+	while ((opt = getopt (argc, argv, "th")) != -1){
 		switch(opt)
 		{
 			case 'h':
 				print_help(argv[0]);
 				return 0;
+			case 't':
+				timeS=atoi(optarg);
+				break;	
 			default:
+			fprintf(stderr, "ERROR default");
 				fprintf(stderr, "uso: %s <hostname> <puerto>\n", argv[0]);
+				fprintf(stderr,"     -t <tiempo de actualización en segundos>\n");
 				fprintf(stderr, "     %s -h\n", argv[0]);
 				return -1;
 		}
 	}
 
 	if(argc != 3){
+		fprintf(stderr, "ERROR ARGC");
 		fprintf(stderr, "uso: %s <hostname> <puerto>\n", argv[0]);
+		fprintf(stderr,"-t <tiempo de actualización en segundos>\n");
 		fprintf(stderr, "     %s -h\n", argv[0]);
 		return -1;
 	}else{
 		hostname = argv[1];
 		port = argv[2];
+		printf("TIEMPO %d",timeS);
 	}
 
 	//Valida el puerto
@@ -74,60 +88,25 @@ int main(int argc, char **argv)
 
 	printf("Conectado exitosamente a %s en el puerto %s.\n", hostname, port);
 
-	/*linea_consola = (char *) calloc(1, MAXLINE);
-	printf("Ingrese comando para enviar al servidor, escriba CHAO para terminar...\n");
-	printf("> ");
-	l = getline(&linea_consola, &max, stdin); //lee desde consola*/
+	//linea_consola = (char *) calloc(1, MAXLINE);
 	
-	sysinfo (&si);
-	n = write(clientfd, &si, sizeof(si)); //Envia al servidor
-	/* Summarize interesting values. */
-	printf ("system uptime : %ld days, %ld:%02ld:%02ld\n", 
- 	si.uptime / day, (si.uptime % day) / hour, 
- 	(si.uptime % hour) / minute, si.uptime % minute);
-	printf ("total RAM   : %5.1f MB\n", si.totalram / megabyte);
-	printf ("free RAM   : %5.1f MB\n", si.freeram / megabyte);
-	printf ("process count : %d\n", si.procs);
- 		//while(1){
-		//n = write(clientfd, linea_consola, l); //Envia al servidor
-		//if(n<=0)
-			//break;
-
-		/* Obtiene respuesta del servidor
-		 * Insiste hasta vaciar el socket
-		*/
-		//bool continuar = false;
-		//printf("RESPUESTA DEL SERVIDOR\n");
-		/*do{
-		 	
-			//Usa recv con MSG_DONTWAIT para no bloquear al leer el socket
-			n = recv(clientfd, read_buffer, MAXLINE, MSG_DONTWAIT);
-
-			if(n < 0){
-				if(errno == EAGAIN) //Vuelve a intentar
-					continuar = true;
-				else
-					continuar = false;
-			}else if(n == MAXLINE) //Socket lleno, volver a leer
-				continuar = true;
-			else if(n == 0)
-				continuar = false;
-			else{ //n < MAXLINE, se asume que son los últimos caracteres en el socket
-				char c = read_buffer[n - 1]; //Busca '\0' para detectar fin
-				if(c == '\0')
-					continuar = false;
-				else
-					continuar = true;
-			}
-
-			printf("%s", read_buffer);
-			memset(read_buffer,0,MAXLINE + 1); //Encerar el buffer
-		}while(continuar);*/
-
-		//Volver a leer desde consola
+	//l = getline(&linea_consola, &max, stdin); //lee desde consola*/
+	while(1){
+		sysinfo (&si);
+		n = write(clientfd, &si, sizeof(si)); //Envia al servidor
+		/* Summarize interesting values. */
+		printf ("system uptime : %ld days, %ld:%02ld:%02ld\n", 
+	 	si.uptime / day, (si.uptime % day) / hour, 
+	 	(si.uptime % hour) / minute, si.uptime % minute);
+		printf ("total RAM   : %5.1f MB\n", si.totalram / megabyte);
+		printf ("free RAM   : %5.1f MB\n", si.freeram / megabyte);
+		printf ("process count : %d\n", si.procs);
+		printf ("Información enviada al servidor....\n");
+		//printf("Escriba CHAO si desea terminar...\n");
 		//printf("> ");
-		//l = getline(&linea_consola, &max, stdin);
-	//}
+		
+		usleep(timeS*ms);
+ 	}
 
 
 	printf("Desconectando...\n");
