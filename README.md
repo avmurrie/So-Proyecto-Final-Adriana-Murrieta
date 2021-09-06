@@ -16,3 +16,6 @@ pueda enviar un mensaje vía mensaje Whatsapp (Sugerencia API Twilio).
 ## Capturas de la solución
 ## Video de ejecución
 ## Bibiliografía
+http://www.chuidiang.org/clinux/sockets/mensajes.php
+https://www.informit.com/articles/article.aspx?p=23618&seqNum=15
+https://man7.org/linux/man-pages/man2/sysinfo.2.html
