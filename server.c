@@ -37,54 +37,6 @@ void *thread(void *vargp){
 	return NULL;
 }
 
-/**
- * Función que crea argv separando una cadena de caracteres en
- * "tokens" delimitados por la cadena de caracteres delim.
- *
- * @param linea Cadena de caracteres a separar en tokens.
- * @param delim Cadena de caracteres a usar como delimitador.
- *
- * @return Puntero a argv en el heap, es necesario liberar esto después de uso.
- *	Retorna NULL si linea está vacía.
- */
-char **parse_comando(char *linea, char *delim)
-{
-	char *token, *saveptr, *saveptr2;
-	char *linea_copy;
-	int i, num_tokens = 0;
-	char **argv = NULL;
-
-	linea_copy = (char *) malloc(strlen(linea) + 1);
-	strcpy(linea_copy, linea);
-
-	/* Obtiene un conteo del número de argumentos */
-	token = strtok_r(linea_copy, delim,&saveptr);
-	/* recorre todos los tokens */
-	while( token != NULL ) {
-		token = strtok_r(NULL, delim,&saveptr);
-		num_tokens++;
-	}
-	free(linea_copy);
-        
-	/* Crea argv en el heap, extrae y copia los argumentos */
-	if(num_tokens > 0){
-
-		/* Crea el arreglo argv */
-		argv = (char **) malloc((num_tokens + 1) * sizeof(char **));
-
-		/* obtiene el primer token */
-		token = strtok_r(linea, delim,&saveptr2);
-		/* recorre todos los tokens */
-		for(i = 0; i < num_tokens; i++){
-			argv[i] = (char *) malloc(strlen(token)+1);
-			strcpy(argv[i], token);
-			token = strtok_r(NULL, delim,&saveptr2);
-		}
-		argv[i] = NULL;
-	}
-
-	return argv;
-}
 
 /**
  * Recoge hijos zombies...
@@ -209,7 +161,7 @@ void atender_cliente(int connfd)
 			return;
 
 		/* Summarize interesting values. */
-		printf("Infotmación recibida del cliente: %d\n", connfd);
+		printf("Información recibida del cliente: %d\n", connfd);
 		
 		printf ("system uptime : %ld days, %ld:%02ld:%02ld\n", 
 	 	si.uptime / day, (si.uptime % day) / hour, 
@@ -220,7 +172,7 @@ void atender_cliente(int connfd)
 		printf ("buffer RAM   : %5.1f MB\n", si.bufferram / megabyte);
 		printf ("process count : %d\n", si.procs);
 		printf ("Total SWAP  : %5.1f MB\n", si.totalswap / megabyte);
-		printf ("free SWAP  : %5.1f MB\n", si.freeswap / megabyte);
+		printf ("free SWAP  : %5.1f MB\n\n", si.freeswap / megabyte);
 		
 
 		memset(buf, 0, MAXLINE); //Encera el buffer

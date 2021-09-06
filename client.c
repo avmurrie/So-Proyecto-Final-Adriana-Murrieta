@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 		return -1;
 	}else{
 		
-		printf("TIEMPO %d",timeS);
+		//printf("TIEMPO %d",timeS);
 	}
 
 	//Valida el puerto
@@ -107,16 +107,8 @@ int main(int argc, char **argv)
 	while(1){
 		sysinfo (&si);
 		n = write(clientfd, &si, sizeof(si)); //Envia al servidor
-		/* Summarize interesting values. */
-		printf ("system uptime : %ld days, %ld:%02ld:%02ld\n", 
-	 	si.uptime / day, (si.uptime % day) / hour, 
-	 	(si.uptime % hour) / minute, si.uptime % minute);
-		printf ("total RAM   : %5.1f MB\n", si.totalram / megabyte);
-		printf ("free RAM   : %5.1f MB\n", si.freeram / megabyte);
-		printf ("process count : %d\n", si.procs);
 		printf ("Información enviada al servidor....\n");
-		//printf("Escriba CHAO si desea terminar...\n");
-		//printf("> ");
+		
 		
 		usleep(timeS*ms);
  	}
