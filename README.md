@@ -23,7 +23,7 @@ Del lado del servidor se debe especificar el puerto en el cual va a correr el se
 ![image](https://user-images.githubusercontent.com/50672069/132160298-d0cba981-c142-4ef5-a37f-60ddefcda89b.png)
 
 #### **Implementación de la comunicación cliente-servidor mediante sockets** 
-Código del lado del servidor para aceptar la conexión de los diferentes clientes
+Código del lado del servidor para aceptar la conexión de los diferentes clientes. El sercidor correrá en local host (`127.0.0.1`)
 ![image](https://user-images.githubusercontent.com/50672069/132159352-16362950-45e8-4a5c-968c-aa461d44aed4.png)
 
 #### **Implementación de hilos**
