@@ -7,6 +7,8 @@
 #include <stdbool.h>
 
 bool dflag=false;
+static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
 //Constantes
  	const long minute = 60;
  	const long hour = minute * 60;
@@ -62,7 +64,7 @@ int main(int argc, char **argv)
 	char *haddrp, *port;
 	pthread_t tid;
 
-	while ((opt = getopt (argc, argv, "hd")) != -1){
+	while ((opt = getopt (argc, argv, "h")) != -1){
 		switch(opt)
 		{
 			
@@ -70,14 +72,14 @@ int main(int argc, char **argv)
 				print_help(argv[0]);
 				return 0;
 			default:
-				fprintf(stderr, "uso: %s [-d] <puerto>\n", argv[0]);
+				fprintf(stderr, "uso: %s <puerto>\n", argv[0]);
 				fprintf(stderr, "     %s -h\n", argv[0]);
 				return -1;
 		}
 	}
 
 	if(!(argc == 2)){
-		fprintf(stderr, "uso: %s [-d] <puerto>\n", argv[0]);
+		fprintf(stderr, "uso: %s <puerto>\n", argv[0]);
 		fprintf(stderr, "     %s -h\n", argv[0]);
 		return -1;
 	}else{
@@ -147,20 +149,23 @@ int main(int argc, char **argv)
 
 void atender_cliente(int connfd)
 {
-	int n, status;
+	int n;
 	char buf[MAXLINE] = {0};
 	char **argv;
-	pid_t pid;
+	
 	//Información del sistema
 	struct sysinfo si;
 
 	//Comunicación con cliente es delimitada con '\0'
 	while(1){
+		//pthread_mutex_lock(&mutex); //Inicio sección crítica
 		n = read(connfd, &si, sizeof(si));
+		//pthread_mutex_unlock(&mutex); //Fin de la sección critica
 		if(n <= 0)
 			return;
 
 		/* Summarize interesting values. */
+		pthread_mutex_lock(&mutex);
 		printf("Información recibida del cliente: %d\n", connfd);
 		
 		printf ("system uptime : %ld days, %ld:%02ld:%02ld\n", 
@@ -173,8 +178,9 @@ void atender_cliente(int connfd)
 		printf ("process count : %d\n", si.procs);
 		printf ("Total SWAP  : %5.1f MB\n", si.totalswap / megabyte);
 		printf ("free SWAP  : %5.1f MB\n\n", si.freeswap / megabyte);
-		
+		pthread_mutex_unlock(&mutex);
 
 		memset(buf, 0, MAXLINE); //Encera el buffer
+		
 	}
 }
